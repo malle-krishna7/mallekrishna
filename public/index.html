@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malle Krishna | Studio Minimal</title>
+  <meta name="description" content="Malle Krishna — Web Developer & Designer (UI/UX, MERN, Java, Python). Building clean, modern, scalable web experiences." />
+  <meta property="og:title" content="Malle Krishna | Portfolio" />
+  <meta property="og:description" content="Web Developer & Designer (UI/UX, MERN, Java, Python). Clean, modern, scalable web experiences." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://mallekrishna.in/og-image.svg" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="canonical" href="https://mallekrishna.in/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="nav">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="container nav-inner">
+      <div class="logo">Malle Krishna</div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="nav-links" id="nav-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="/projects/">Projects</a>
+        <a href="#booking">Booking</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn" href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="home" class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">Web Developer & Designer</p>
+        <h1>Malle Krishna</h1>
+        <p class="lead">
+          I create beautiful, responsive websites and web applications with modern technologies.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#proposal">Request a Proposal</a>
+          <a class="btn ghost" href="#contact">Contact Me</a>
+        </div>
+        <div class="hero-meta">
+          <div>
+            <p class="meta-title">Location</p>
+            <p class="meta-value">Hyderabad</p>
+          </div>
+          <div>
+            <p class="meta-title">Focus</p>
+            <p class="meta-value">UI/UX + Full Stack</p>
+          </div>
+          <div>
+            <p class="meta-title">Stack</p>
+            <p class="meta-value">MERN + Java + Python</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container split">
+        <div>
+          <h2>About</h2>
+          <p>
+            I am Malle Krishna, a Web Developer & Designer focused on building clean, modern,
+            and scalable web experiences. I enjoy solving real problems with solid engineering
+            and thoughtful design.
+          </p>
+        </div>
+        <div class="panel">
+          <p class="panel-title">What I deliver</p>
+          <ul class="panel-list">
+            <li>Fast, responsive interfaces</li>
+            <li>Clean backend integrations</li>
+            <li>Design systems that scale</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section alt">
+      <div class="container">
+        <h2>Skills</h2>
+        <div class="chips">
+          <span>UI/UX Design</span>
+          <span>MERN Stack</span>
+          <span>Java Full Stack</span>
+          <span>Python</span>
+          <span>Node.js</span>
+          <span>MongoDB</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Projects</h2>
+          <p>Selected work focusing on UI quality and robust backends.</p>
+        </div>
+        <div class="projects">
+          <article class="project">
+            <h3>Mentor-Connect</h3>
+            <p>Platform where students connect with mentors for guidance and growth.</p>
+            <div class="tags">
+              <span>Full Stack</span><span>MERN</span><span>UI/UX</span>
+            </div>
+          </article>
+          <article class="project">
+            <h3>AI X-Ray Diagnosis</h3>
+            <p>AI-assisted X-ray diagnosis concept for faster screening and insights.</p>
+            <div class="tags">
+              <span>AI</span><span>Python</span><span>Web</span>
+            </div>
+          </article>
+          <article class="project">
+            <h3>NGO Food Donation App</h3>
+            <p>Connects donors with NGOs to reduce food waste and support communities.</p>
+            <div class="tags">
+              <span>MERN</span><span>Backend</span><span>Impact</span>
+            </div>
+          </article>
+        </div>
+        <div class="projects-cta">
+          <a class="btn ghost" href="/projects/">View All Projects</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="booking" class="section alt">
+      <div class="container contact-grid">
+        <div>
+          <h2>Book a Call</h2>
+          <p class="contact-lead">Pick a slot and tell me about your project.</p>
+          <div class="contact-list">
+            <div>
+              <p class="meta-title">Services</p>
+              <p class="meta-value">UI/UX, MERN, Java Full Stack, Python</p>
+            </div>
+            <div>
+              <p class="meta-title">Timezone</p>
+              <p class="meta-value">Your local time</p>
+            </div>
+            <div>
+              <p class="meta-title">Rule</p>
+              <p class="meta-value">No double-booking</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="booking-form" class="contact-form">
+          <div class="row">
+            <input type="text" id="bk-name" name="name" placeholder="Your name" required />
+            <input type="email" id="bk-email" name="email" placeholder="Your email" required />
+          </div>
+          <input type="tel" id="bk-phone" name="phone" placeholder="Phone number" required />
+          <div class="row">
+            <select id="bk-service" name="service" required>
+              <option value="">Select service</option>
+              <option>UI/UX</option>
+              <option>MERN</option>
+              <option>Java Full Stack</option>
+              <option>Python</option>
+            </select>
+            <select id="bk-duration" name="durationMinutes" required>
+              <option value="">Duration</option>
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+            </select>
+          </div>
+          <div class="calendar">
+            <div class="calendar-header">
+              <span>Pick a day</span>
+              <span class="calendar-legend">Your local time</span>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+          </div>
+          <div class="time-picker">
+            <div class="calendar-header">
+              <span>Pick a time</span>
+              <span id="selected-date" class="calendar-legend"></span>
+            </div>
+            <div id="time-slots" class="time-slots"></div>
+          </div>
+          <input type="hidden" id="bk-start" name="startAt" />
+          <textarea id="bk-notes" name="notes" placeholder="Project notes" rows="4"></textarea>
+          <button type="submit" class="btn">Book Slot</button>
+          <p id="booking-status" class="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="proposal" class="section">
+      <div class="container contact-grid">
+        <div>
+          <h2>Request a Proposal</h2>
+          <p class="contact-lead">Share the essentials. I will respond with a tailored plan.</p>
+          <div class="contact-list">
+            <div>
+              <p class="meta-title">Best for</p>
+              <p class="meta-value">Startups, business websites, full-stack apps</p>
+            </div>
+            <div>
+              <p class="meta-title">Stack</p>
+              <p class="meta-value">UI/UX, MERN, Java, Python</p>
+            </div>
+            <div>
+              <p class="meta-title">Response</p>
+              <p class="meta-value">Within 24–48 hours</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="proposal-form" class="contact-form">
+          <div class="row">
+            <input type="text" id="pr-name" name="name" placeholder="Your name" required />
+            <input type="email" id="pr-email" name="email" placeholder="Your email" required />
+          </div>
+          <input type="text" id="pr-company" name="company" placeholder="Company (optional)" />
+          <div class="row">
+            <select id="pr-type" name="projectType" required>
+              <option value="">Project type</option>
+              <option>Website</option>
+              <option>Web App</option>
+              <option>Mobile App</option>
+              <option>UI/UX Design</option>
+              <option>Other</option>
+            </select>
+            <select id="pr-timeline" name="timeline" required>
+              <option value="">Timeline</option>
+              <option>ASAP</option>
+              <option>2-4 weeks</option>
+              <option>1-2 months</option>
+              <option>3+ months</option>
+            </select>
+          </div>
+          <select id="pr-budget" name="budgetRange">
+            <option value="">Budget range (optional)</option>
+            <option>$1k - $5k</option>
+            <option>$5k - $15k</option>
+            <option>$15k - $30k</option>
+            <option>$30k+</option>
+          </select>
+          <textarea id="pr-details" name="details" placeholder="Project details" rows="5" required></textarea>
+          <button type="submit" class="btn">Submit Request</button>
+          <p id="proposal-status" class="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="contact" class="section alt">
+      <div class="container contact-grid">
+        <div>
+          <h2>Contact</h2>
+          <p class="contact-lead">Let us build something polished and fast.</p>
+          <div class="contact-list">
+            <div>
+              <p class="meta-title">Email</p>
+              <p class="meta-value">mallekrishna77@gmail.com</p>
+            </div>
+            <div>
+              <p class="meta-title">Phone</p>
+              <p class="meta-value">+91 6300155622</p>
+            </div>
+            <div>
+              <p class="meta-title">Location</p>
+              <p class="meta-value">Hyderabad</p>
+            </div>
+          </div>
+          <div class="socials">
+            <a href="https://github.com/malle-krishna7" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/malle-krishna" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://www.instagram.com/malle_krishna_/" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="https://x.com/mallekrishna77/" target="_blank" rel="noreferrer">X</a>
+          </div>
+        </div>
+
+        <form id="contact-form" class="contact-form">
+          <div class="row">
+            <input type="text" id="name" name="name" placeholder="Your name" required />
+            <input type="email" id="email" name="email" placeholder="Your email" required />
+          </div>
+          <div class="hp-field" aria-hidden="true">
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company" tabindex="-1" autocomplete="off" />
+          </div>
+          <input type="text" id="subject" name="subject" placeholder="Subject" required />
+          <textarea id="message" name="message" placeholder="Message" rows="5" required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+          <p id="form-status" class="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Malle Krishna. All rights reserved.</p>
+      <p><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
