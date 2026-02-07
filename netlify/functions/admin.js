@@ -45,113 +45,264 @@ exports.handler = async (event, context) => {
     const path = event.path;
     const method = event.httpMethod;
 
-    // Login page
-    if (path === '/admin/login' || path === '/admin') {
+// Logout
+    if (path === '/admin/logout' && method === 'GET') {
+      return {
+        statusCode: 401,
+        headers: { ...headers, 'WWW-Authenticate': 'Basic realm="Admin"' },
+        body: 'Logged out.',
+      };
+    }
+
+    // Login page and Dashboard
+    if (path === '/admin' || path === '/admin/') {
       if (basicAuth(event)) {
+        // Dashboard
         return {
           statusCode: 200,
           headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' },
-          body: `
-<!DOCTYPE html>
-<html>
+          body: `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
   <style>
     :root { --bg: #0b1410; --text: #e0e0e0; --border: #3a4a42; --panel: #1a2520; --accent: #caa65a; }
-    body { font-family: ui-sans-serif, system-ui; margin: 0; background: var(--bg); color: var(--text); }
-    header { padding: 22px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(11,20,16,0.9); }
-    main { padding: 24px; max-width: 1200px; }
-    .card { border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: var(--panel); margin-bottom: 12px; }
-    .stat { font-size: 28px; font-weight: 700; color: var(--accent); margin: 8px 0; }
-    .btn { display: inline-block; padding: 8px 12px; border-radius: 10px; background: #caa65a; color: #0b1410; text-decoration: none; font-weight: 700; margin-right: 8px; }
-    a { color: var(--accent); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(11,20,16,0.95); position: sticky; top: 0; }
+    header h1 { font-size: 18px; font-weight: 600; }
+    .header-actions { display: flex; gap: 16px; }
+    .header-actions a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .header-actions a:hover { opacity: 0.7; }
+    main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { border: 1px solid var(--border); border-radius: 12px; padding: 20px; background: var(--panel); }
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; opacity: 0.8; }
+    .stat { font-size: 32px; font-weight: 700; color: var(--accent); margin: 8px 0; }
+    .stat-label { font-size: 12px; color: var(--text); opacity: 0.6; margin-top: 8px; }
+    .btn { display: inline-block; padding: 8px 16px; border-radius: 8px; background: var(--accent); color: #0b1410; text-decoration: none; font-weight: 600; font-size: 13px; margin-top: 12px; border: none; cursor: pointer; }
+    .btn:hover { opacity: 0.9; }
+    .btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--accent); }
+    .loading { opacity: 0.5; }
+    .error { color: #ff6b6b; font-size: 12px; }
   </style>
 </head>
 <body>
   <header>
-    <div>Admin Dashboard</div>
-    <div>
-      <a href="/admin/exports">Exports</a>&nbsp;&nbsp;
-      <a href="/admin/logout">Logout</a>
+    <h1>📊 Admin Dashboard</h1>
+    <div class="header-actions">
+      <a href="/admin/exports">📥 Exports</a>
+      <a href="/admin/logout">🚪 Logout</a>
     </div>
   </header>
   <main>
-    <div class="card">
-      <div><strong>📧 Contacts Received</strong></div>
-      <div class="stat" id="contact-count">Loading...</div>
-      <a class="btn" href="/admin/export/contacts">Export</a>
-    </div>
-    <div class="card">
-      <div><strong>📅 Bookings</strong></div>
-      <div class="stat" id="booking-count">Loading...</div>
-      <a class="btn" href="/admin/export/bookings">Export</a>
-    </div>
-    <div class="card">
-      <div><strong>💼 Proposals</strong></div>
-      <div class="stat" id="proposal-count">Loading...</div>
-      <a class="btn" href="/admin/export/proposals">Export</a>
-    </div>
-    <div class="card">
-      <div><strong>👥 Site Visits</strong></div>
-      <div class="stat" id="visit-count">Loading...</div>
+    <div class="grid">
+      <div class="card">
+        <h3>💌 Contacts</h3>
+        <div class="stat loading" id="contact-count">—</div>
+        <div class="stat-label">total received</div>
+        <a class="btn" href="/admin/export/contacts">Download CSV</a>
+      </div>
+      <div class="card">
+        <h3>📅 Bookings</h3>
+        <div class="stat loading" id="booking-count">—</div>
+        <div class="stat-label">total bookings</div>
+        <a class="btn" href="/admin/export/bookings">Download CSV</a>
+      </div>
+      <div class="card">
+        <h3>💼 Proposals</h3>
+        <div class="stat loading" id="proposal-count">—</div>
+        <div class="stat-label">total requests</div>
+        <a class="btn" href="/admin/export/proposals">Download CSV</a>
+      </div>
+      <div class="card">
+        <h3>👥 Site Visits</h3>
+        <div class="stat loading" id="visit-count">—</div>
+        <div class="stat-label">last 90 days</div>
+      </div>
     </div>
   </main>
   <script>
-    fetch('/admin/stats', { headers: { 'Authorization': 'Basic ' + btoa('${process.env.ADMIN_USER}:${process.env.ADMIN_PASS}') } })
-      .then(r => r.json())
-      .then(d => {
-        document.getElementById('contact-count').textContent = d.contacts || 0;
-        document.getElementById('booking-count').textContent = d.bookings || 0;
-        document.getElementById('proposal-count').textContent = d.proposals || 0;
-        document.getElementById('visit-count').textContent = d.visits || 0;
+    const apiUrl = '/admin/stats';
+    const headers = new Headers({
+      'Authorization': 'Basic ' + btoa('${process.env.ADMIN_USER}:${process.env.ADMIN_PASS}')
+    });
+
+    fetch(apiUrl, { headers })
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to load stats');
+        return r.json();
       })
-      .catch(e => console.error(e));
+      .then(data => {
+        document.getElementById('contact-count').textContent = data.contacts || 0;
+        document.getElementById('contact-count').classList.remove('loading');
+        
+        document.getElementById('booking-count').textContent = data.bookings || 0;
+        document.getElementById('booking-count').classList.remove('loading');
+        
+        document.getElementById('proposal-count').textContent = data.proposals || 0;
+        document.getElementById('proposal-count').classList.remove('loading');
+        
+        document.getElementById('visit-count').textContent = data.visits || 0;
+        document.getElementById('visit-count').classList.remove('loading');
+      })
+      .catch(err => {
+        console.error('Error loading stats:', err);
+        document.querySelectorAll('.stat').forEach(stat => {
+          stat.textContent = 'Error';
+          stat.classList.add('error');
+          stat.classList.remove('loading');
+        });
+      });
   </script>
 </body>
-</html>
-          `,
+</html>`,
+        };
+      }
+
+      // Login form
+      return {
+        statusCode: 401,
+        headers: { ...headers, 'WWW-Authenticate': 'Basic realm="Admin"', 'Content-Type': 'text/html; charset=utf-8' },
+        body: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <style>
+    :root { --bg: #0b1410; --text: #e0e0e0; --border: #3a4a42; --panel: #1a2520; --accent: #caa65a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, var(--bg), #141614); color: var(--text); }
+    .login-container { width: 100%; max-width: 400px; padding: 20px; }
+    .login-box { border: 1px solid var(--border); border-radius: 12px; padding: 40px; background: var(--panel); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .login-box h2 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }
+    .login-box p { font-size: 13px; opacity: 0.6; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; opacity: 0.8; }
+    input { width: 100%; padding: 10px; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+    input:focus { outline: none; border-color: var(--accent); background: rgba(255,255,255,0.08); }
+    button { width: 100%; padding: 10px; margin-top: 16px; background: var(--accent); color: #0b1410; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .error { color: #ff6b6b; font-size: 12px; margin-top: 12px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <p>Enter your credentials to access the dashboard</p>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="admin" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit">Sign In</button>
+        <div class="error" id="error-msg"></div>
+      </form>
+    </div>
+  </div>
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const auth = 'Basic ' + btoa(username + ':' + password);
+      
+      fetch('/admin', { 
+        headers: { 'Authorization': auth } 
+      })
+      .then(r => {
+        if (r.ok) {
+          sessionStorage.setItem('adminAuth', auth);
+          window.location.href = '/admin';
+        } else {
+          document.getElementById('error-msg').textContent = 'Invalid credentials';
+          document.getElementById('error-msg').style.display = 'block';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('error-msg').textContent = 'Connection error';
+        document.getElementById('error-msg').style.display = 'block';
+      });
+    }
+  </script>
+</body>
+</html>`,
+      };
+    }
+
+    // Exports page
+    if (path === '/admin/exports' && method === 'GET') {
+      if (!basicAuth(event)) {
+        return {
+          statusCode: 401,
+          headers: { ...headers, 'WWW-Authenticate': 'Basic realm="Admin"' },
+          body: 'Unauthorized',
         };
       }
 
       return {
-        statusCode: 401,
-        headers: { ...headers, 'WWW-Authenticate': 'Basic realm="Admin"' },
-        body: `
-<!DOCTYPE html>
-<html>
+        statusCode: 200,
+        headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' },
+        body: `<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Admin Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Exports</title>
   <style>
-    body { font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; background: #0b1410; color: #e0e0e0; }
-    .login-box { border: 1px solid #3a4a42; border-radius: 14px; padding: 32px; width: 300px; background: #1a2520; }
-    input { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; background: #0b1410; color: #e0e0e0; border: 1px solid #3a4a42; border-radius: 6px; }
-    button { width: 100%; padding: 10px; margin-top: 16px; background: #caa65a; color: #0b1410; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    :root { --bg: #0b1410; --text: #e0e0e0; --border: #3a4a42; --panel: #1a2520; --accent: #caa65a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(11,20,16,0.95); }
+    header h1 { font-size: 18px; font-weight: 600; }
+    .header-actions a { color: var(--accent); text-decoration: none; font-size: 14px; margin-left: 16px; }
+    main { padding: 24px; max-width: 600px; margin: 0 auto; }
+    .export-item { border: 1px solid var(--border); border-radius: 12px; padding: 20px; background: var(--panel); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .export-item h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .export-item p { font-size: 12px; opacity: 0.6; }
+    .btn { padding: 8px 16px; border-radius: 8px; background: var(--accent); color: #0b1410; text-decoration: none; font-weight: 600; font-size: 13px; border: none; cursor: pointer; }
+    .btn:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Admin Login</h2>
-    <form onsubmit="login(event)">
-      <input type="text" id="user" placeholder="Username" required>
-      <input type="password" id="pass" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-  </div>
-  <script>
-    function login(e) {
-      e.preventDefault();
-      const user = document.getElementById('user').value;
-      const pass = document.getElementById('pass').value;
-      const auth = 'Basic ' + btoa(user + ':' + pass);
-      fetch('/admin', { headers: { 'Authorization': auth } })
-        .then(r => r.ok ? (localStorage.setItem('auth', auth), window.location.reload()) : alert('Invalid credentials'))
-        .catch(alert);
-    }
-  </script>
+  <header>
+    <h1>📥 Export Data</h1>
+    <a href="/admin">← Back to Dashboard</a>
+  </header>
+  <main>
+    <div class="export-item">
+      <div>
+        <h3>💌 Contacts</h3>
+        <p>Download all contact form submissions</p>
+      </div>
+      <a class="btn" href="/admin/export/contacts" download>CSV</a>
+    </div>
+    <div class="export-item">
+      <div>
+        <h3>📅 Bookings</h3>
+        <p>Download all booking requests</p>
+      </div>
+      <a class="btn" href="/admin/export/bookings" download>CSV</a>
+    </div>
+    <div class="export-item">
+      <div>
+        <h3>💼 Proposals</h3>
+        <p>Download all proposal requests</p>
+      </div>
+      <a class="btn" href="/admin/export/proposals" download>CSV</a>
+    </div>
+  </main>
 </body>
-</html>
-        `,
+</html>`,
       };
     }
 
