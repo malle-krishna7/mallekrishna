@@ -5,7 +5,7 @@ const { sendEmail } = require('../email');
 const router = express.Router();
 
 const ALLOWED_DURATIONS = new Set([15, 30, 45, 60]);
-const ALLOWED_SERVICES = new Set(['UI/UX', 'MERN', 'Java Full Stack', 'Python']);
+const ALLOWED_SERVICES = new Set(['UI/UX', 'MERN', 'Java Full Stack', 'Python', 'Client Meeting']);
 
 const BOOKING_START_HOUR = Number(process.env.BOOKING_START_HOUR || 10);
 const BOOKING_END_HOUR = Number(process.env.BOOKING_END_HOUR || 18);

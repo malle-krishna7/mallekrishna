@@ -9,6 +9,9 @@ const bookingSchema = new mongoose.Schema({
   startAt: { type: Date, required: true },
   endAt: { type: Date, required: true },
   notes: { type: String, trim: true, maxlength: 2000 },
+  status: { type: String, enum: ['New', 'In Progress', 'Done'], default: 'New' },
+  adminNote: { type: String, trim: true, maxlength: 2000 },
+  paymentStatus: { type: String, enum: ['Unpaid', 'Paid'], default: 'Unpaid' },
   createdAt: { type: Date, default: Date.now }
 });
 

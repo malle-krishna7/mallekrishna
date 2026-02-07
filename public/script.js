@@ -1,39 +1,43 @@
-﻿const form = document.getElementById('contact-form');
+const form = document.getElementById('contact-form');
 const statusEl = document.getElementById('form-status');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  statusEl.textContent = 'Sending...';
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (statusEl) statusEl.textContent = 'Sending...';
 
-  const payload = {
-    name: document.getElementById('name').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    company: (document.getElementById('company')?.value || '').trim(),
-    subject: document.getElementById('subject').value.trim(),
-    message: document.getElementById('message').value.trim()
-  };
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      company: (document.getElementById('company')?.value || '').trim(),
+      subject: document.getElementById('subject').value.trim(),
+      message: document.getElementById('message').value.trim()
+    };
 
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Failed to send');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to send');
+      }
+
+      form.reset();
+      if (statusEl) statusEl.textContent = 'Message sent successfully.';
+    } catch (err) {
+      if (statusEl) statusEl.textContent = `Error: ${err.message}`;
     }
-
-    form.reset();
-    statusEl.textContent = 'Message sent successfully.';
-  } catch (err) {
-    statusEl.textContent = `Error: ${err.message}`;
-  }
-});
+  });
+}
 
 const navToggle = document.getElementById('nav-toggle');
 const navLinks = document.getElementById('nav-links');
+const themeToggle = document.getElementById('theme-toggle');
+const themeLabel = themeToggle ? themeToggle.querySelector('.theme-label') : null;
 
 if (navToggle && navLinks) {
   navToggle.addEventListener('click', () => {
@@ -46,6 +50,28 @@ if (navToggle && navLinks) {
       navLinks.classList.remove('active');
       navToggle.setAttribute('aria-expanded', 'false');
     });
+  });
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  if (themeToggle) {
+    const isLight = theme === 'light';
+    themeToggle.setAttribute('aria-pressed', String(isLight));
+    if (themeLabel) themeLabel.textContent = isLight ? 'Dark' : 'Light';
+  }
+}
+
+if (themeToggle) {
+  const saved = localStorage.getItem('theme');
+  const initial = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  applyTheme(initial);
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
   });
 }
 

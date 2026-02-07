@@ -8,25 +8,7 @@ node_bundler = "esbuild"
 external_node_modules = ["mongoose", "dotenv", "express", "nodemailer"]
 
 [[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/api:splat"
-status = 200
-force = false
-
-[[redirects]]
-from = "/admin*"
-to = "/.netlify/functions/admin"
-status = 200
-force = false
-
-[[redirects]]
-from = "/data*"
-to = "/.netlify/functions/data"
-status = 200
-force = false
-
-# SPA routing fallback for 404 errors
-[[redirects]]
 from = "/*"
-to = "/404.html"
-status = 404
+to = "/.netlify/functions/server"
+status = 200
+force = false
