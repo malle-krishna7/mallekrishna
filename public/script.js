@@ -83,6 +83,7 @@ const selectedDateEl = document.getElementById('selected-date');
 const durationSelect = document.getElementById('bk-duration');
 const proposalForm = document.getElementById('proposal-form');
 const proposalStatus = document.getElementById('proposal-status');
+const proposalProgressText = document.getElementById('proposal-progress-text');
 
 if (bookingForm) {
   const SLOT_STEP_MIN = 15;
@@ -293,6 +294,61 @@ if (bookingForm) {
 }
 
 if (proposalForm) {
+  const proposalSteps = Array.from(proposalForm.querySelectorAll('.proposal-step'));
+  const nextButtons = Array.from(proposalForm.querySelectorAll('.proposal-next'));
+  const prevButtons = Array.from(proposalForm.querySelectorAll('.proposal-prev'));
+  let currentStep = 1;
+
+  const validators = {
+    1: () => {
+      const name = document.getElementById('pr-name').value.trim();
+      const email = document.getElementById('pr-email').value.trim();
+      if (!name || !email) {
+        throw new Error('Please complete name and email.');
+      }
+    },
+    2: () => {
+      const type = document.getElementById('pr-type').value;
+      const timeline = document.getElementById('pr-timeline').value;
+      const budget = document.getElementById('pr-budget').value;
+      if (!type || !timeline || !budget) {
+        throw new Error('Please select project type, timeline, and budget.');
+      }
+    }
+  };
+
+  function setProposalStep(step) {
+    currentStep = step;
+    proposalSteps.forEach((panel) => {
+      const panelStep = Number(panel.getAttribute('data-step'));
+      panel.hidden = panelStep !== currentStep;
+    });
+    if (proposalProgressText) {
+      proposalProgressText.textContent = `Step ${currentStep} of 3`;
+    }
+    if (proposalStatus) proposalStatus.textContent = '';
+  }
+
+  nextButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      try {
+        const validate = validators[currentStep];
+        if (validate) validate();
+        setProposalStep(Math.min(3, currentStep + 1));
+      } catch (err) {
+        if (proposalStatus) proposalStatus.textContent = `Error: ${err.message}`;
+      }
+    });
+  });
+
+  prevButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      setProposalStep(Math.max(1, currentStep - 1));
+    });
+  });
+
+  setProposalStep(1);
+
   proposalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     proposalStatus.textContent = 'Submitting...';

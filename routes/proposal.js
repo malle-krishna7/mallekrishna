@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const { name, email, company, projectType, timeline, budgetRange, details } = req.body;
-    if (!name || !email || !projectType || !timeline || !details) {
+    if (!name || !email || !projectType || !timeline || !budgetRange || !details) {
       return res.status(400).json({ error: 'All required fields must be filled.' });
     }
 

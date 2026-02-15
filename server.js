@@ -1189,6 +1189,36 @@ app.get('/client', clientAuth, async (req, res) => {
         .reverse()
         .map((f) => `<div class="feedback-item"><div class="meta">${f.author || 'Client'} · ${new Date(f.createdAt).toLocaleString()}</div><div>${f.message || ''}</div></div>`)
         .join('');
+      const updatesList = (p.updates || [])
+        .slice()
+        .reverse()
+        .map((u) => `<div class="update-item"><div class="meta">${u.author || 'Admin'} · ${new Date(u.createdAt).toLocaleString()}</div><div class="update-title">${u.title || 'Update'}</div><div>${u.body || ''}</div></div>`)
+        .join('');
+      const filesList = (p.files || [])
+        .slice()
+        .reverse()
+        .map((f) => `<div class="file-item"><a href="${f.url}" target="_blank" rel="noreferrer">${f.label || 'File'}</a><div class="meta">${f.uploadedBy || 'Shared'} · ${new Date(f.createdAt).toLocaleString()}</div><div class="muted">${f.note || ''}</div></div>`)
+        .join('');
+      const contractsList = (p.contracts || [])
+        .slice()
+        .reverse()
+        .map((c, index) => {
+          const status = c.status || 'Pending';
+          const signedAt = c.signedAt ? new Date(c.signedAt).toLocaleString() : '';
+          const markButton =
+            status === 'Signed'
+              ? ''
+              : `<form method="post" action="/client/projects/${p._id}/contracts/${index}/confirm">
+                  <button class="btn ghost" type="submit">Mark Signed</button>
+                </form>`;
+          return `<div class="contract-item">
+            <div class="meta">Status: ${status}${signedAt ? ` · ${signedAt}` : ''}</div>
+            <div class="update-title">${c.title || 'Agreement'}</div>
+            <a href="${c.url}" target="_blank" rel="noreferrer">Open Agreement</a>
+            ${markButton}
+          </div>`;
+        })
+        .join('');
       return `<div class="card">
         <h3>${p.title}</h3>
         <div class="meta">Status: ${p.status}</div>
@@ -1197,6 +1227,7 @@ app.get('/client', clientAuth, async (req, res) => {
         ${links ? `<div class="links">${links}</div>` : ''}
         <div class="section">
           <div class="section-title">Request a meeting</div>
+          ${client?.schedulingUrl ? `<div class="muted">Scheduling link:</div><a class="mono-link" href="${client.schedulingUrl}" target="_blank" rel="noreferrer">${client.schedulingUrl}</a>` : ''}
           <form class="meeting-form">
             <input name="name" value="${client?.name || ''}" readonly />
             <input name="email" value="${client?.email || ''}" readonly />
@@ -1214,6 +1245,24 @@ app.get('/client', clientAuth, async (req, res) => {
             <textarea name="notes" placeholder="Meeting notes or agenda"></textarea>
             <button class="btn" type="submit">Book meeting</button>
             <div class="form-msg" aria-live="polite"></div>
+          </form>
+        </div>
+        <div class="section">
+          <div class="section-title">Project updates</div>
+          ${updatesList || '<div class="muted">No updates yet.</div>'}
+        </div>
+        <div class="section">
+          <div class="section-title">Agreements</div>
+          ${contractsList || '<div class="muted">No agreements yet.</div>'}
+        </div>
+        <div class="section">
+          <div class="section-title">Files</div>
+          ${filesList || '<div class="muted">No files yet.</div>'}
+          <form method="post" action="/client/projects/${p._id}/files" class="feedback-form">
+            <input name="label" placeholder="File name" required />
+            <input name="url" placeholder="File URL (Drive/Dropbox/etc.)" required />
+            <input name="note" placeholder="Short note (optional)" />
+            <button class="btn ghost" type="submit">Share file link</button>
           </form>
         </div>
         <div class="section">
@@ -1235,7 +1284,7 @@ app.get('/client', clientAuth, async (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Client Portal</title>
   <style>
-    :root { --bg:#0b1410; --panel:#121f18; --text:#f4efe6; --muted:#c9bba4; --accent:#caa65a; --border:rgba(202,166,90,0.25); --good:#3ccf91; }
+    :root { --bg:#0b1410; --panel:#121f18; --text:#f4efe6; --muted:#c9bba4; --accent:${client?.accentColor || '#caa65a'}; --border:rgba(202,166,90,0.25); --good:#3ccf91; }
     [data-theme="light"] { --bg:#f7f4ef; --panel:#ffffff; --text:#1b1b1b; --muted:#6b645a; --accent:#b88a3d; --border:rgba(184,138,61,0.25); --good:#1b8c5c; }
     * { box-sizing: border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 0; background: var(--bg); color: var(--text); }
@@ -1261,6 +1310,12 @@ app.get('/client', clientAuth, async (req, res) => {
     .btn { display:inline-block; padding:8px 12px; border-radius:10px; background: var(--accent); color:#0b1410; text-decoration:none; font-weight:700; border:0; cursor:pointer; }
     .btn.ghost { background: transparent; color: var(--accent); border:1px solid var(--border); }
     .feedback-item { border:1px solid var(--border); border-radius:10px; padding:10px; margin-bottom: 8px; background: rgba(0,0,0,0.06); }
+    .update-item { border:1px solid var(--border); border-radius:10px; padding:10px; margin-bottom: 8px; background: rgba(0,0,0,0.04); }
+    .update-title { font-weight: 600; margin: 6px 0; }
+    .file-item { border:1px solid var(--border); border-radius:10px; padding:10px; margin-bottom: 8px; background: rgba(0,0,0,0.04); }
+    .file-item a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .contract-item { border:1px solid var(--border); border-radius:10px; padding:10px; margin-bottom: 8px; background: rgba(0,0,0,0.04); display:grid; gap:6px; }
+    .mono-link { color: var(--accent); text-decoration: none; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
     .muted { color: var(--muted); }
     .form-msg { margin-top: 8px; font-size: 12px; color: var(--muted); }
     .theme-toggle { display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; border:1px solid var(--border); border-radius:999px; background:transparent; color:var(--text); font-size:11px; text-transform:uppercase; letter-spacing:1px; cursor:pointer; }
@@ -1269,7 +1324,10 @@ app.get('/client', clientAuth, async (req, res) => {
 </head>
 <body>
   <header>
-    <div>Client Portal - ${client?.name || ''}</div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      ${client?.logoUrl ? `<img src="${client.logoUrl}" alt="Client logo" style="height:28px; width:auto; border-radius:6px;" />` : ''}
+      <div>Client Portal - ${client?.name || ''}</div>
+    </div>
     <div style="display:flex; align-items:center; gap:12px;">
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
         <span class="theme-dot"></span><span class="theme-label">Light</span>
@@ -1354,6 +1412,46 @@ app.post('/client/projects/:id/feedback', clientAuth, async (req, res) => {
     { _id: req.params.id, clientId: req.clientId },
     { $push: { feedback: { author: client?.name || client?.email || 'Client', message } } }
   );
+  const notify = process.env.NOTIFY_EMAIL;
+  if (notify) {
+    await sendEmail({
+      to: notify,
+      subject: 'Client feedback received',
+      text: `Client: ${client?.name || client?.email || 'Client'}\nMessage: ${message}`
+    });
+  }
+  return res.redirect('/client');
+});
+
+app.post('/client/projects/:id/files', clientAuth, async (req, res) => {
+  const label = String(req.body.label || '').trim();
+  const url = String(req.body.url || '').trim();
+  const note = String(req.body.note || '').trim();
+  if (!label || !url) {
+    return res.redirect('/client');
+  }
+  const client = await Client.findById(req.clientId).lean();
+  await Project.updateOne(
+    { _id: req.params.id, clientId: req.clientId },
+    {
+      $push: {
+        files: {
+          label,
+          url,
+          note,
+          uploadedBy: client?.name || client?.email || 'Client'
+        }
+      }
+    }
+  );
+  const notify = process.env.NOTIFY_EMAIL;
+  if (notify) {
+    await sendEmail({
+      to: notify,
+      subject: 'Client shared a file',
+      text: `Client: ${client?.name || client?.email || 'Client'}\nFile: ${label}\nURL: ${url}\nNote: ${note || 'N/A'}`
+    });
+  }
   return res.redirect('/client');
 });
 
@@ -1372,6 +1470,39 @@ app.post('/client/projects/:id/milestones/:index/approve', clientAuth, async (re
   milestone.approvedAt = new Date();
   milestone.approvedBy = client?.name || client?.email || 'Client';
   await project.save();
+  const notify = process.env.NOTIFY_EMAIL;
+  if (notify) {
+    await sendEmail({
+      to: notify,
+      subject: 'Milestone approved',
+      text: `Client: ${client?.name || client?.email || 'Client'}\nProject: ${project.title}\nMilestone: ${milestone.title}`
+    });
+  }
+  return res.redirect('/client');
+});
+
+app.post('/client/projects/:id/contracts/:index/confirm', clientAuth, async (req, res) => {
+  const project = await Project.findOne({ _id: req.params.id, clientId: req.clientId });
+  if (!project) {
+    return res.redirect('/client');
+  }
+  const index = Number(req.params.index);
+  if (Number.isNaN(index) || index < 0 || index >= (project.contracts || []).length) {
+    return res.redirect('/client');
+  }
+  const client = await Client.findById(req.clientId).lean();
+  const contract = project.contracts[index];
+  contract.status = 'Signed';
+  contract.signedAt = new Date();
+  await project.save();
+  const notify = process.env.NOTIFY_EMAIL;
+  if (notify) {
+    await sendEmail({
+      to: notify,
+      subject: 'Agreement marked signed',
+      text: `Client: ${client?.name || client?.email || 'Client'}\nProject: ${project.title}\nAgreement: ${contract.title || 'Agreement'}`
+    });
+  }
   return res.redirect('/client');
 });
 
@@ -1387,6 +1518,8 @@ app.get('/admin/clients', adminAuth, async (req, res) => {
       <td>${c.name}</td>
       <td>${c.email}</td>
       <td>${c.company || ''}</td>
+      <td>${c.accentColor || ''}</td>
+      <td>${c.schedulingUrl ? `<a href="${c.schedulingUrl}" target="_blank" rel="noreferrer">Link</a>` : ''}</td>
       <td>
         <form method="post" action="/admin/clients/${c._id}/send-login">
           <button class="btn" type="submit">Send Login Link</button>
@@ -1435,11 +1568,14 @@ app.get('/admin/clients', adminAuth, async (req, res) => {
       <input name="name" placeholder="Client name" required />
       <input name="email" placeholder="Email" required />
       <input name="company" placeholder="Company (optional)" />
+      <input name="logoUrl" placeholder="Logo URL (optional)" />
+      <input name="accentColor" placeholder="Accent color (#caa65a)" />
+      <input name="schedulingUrl" placeholder="Scheduling link (optional)" />
       <button class="btn" type="submit">Add Client</button>
     </form>
     <table>
-      <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Portal</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="4">No clients yet.</td></tr>'}</tbody>
+      <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Accent</th><th>Calendar</th><th>Portal</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6">No clients yet.</td></tr>'}</tbody>
     </table>
   </main>
   <script>
@@ -1470,8 +1606,15 @@ app.get('/admin/clients', adminAuth, async (req, res) => {
 });
 
 app.post('/admin/clients', adminAuth, async (req, res) => {
-  const { name, email, company } = req.body;
-  await Client.create({ name, email, company });
+  const { name, email, company, logoUrl, accentColor, schedulingUrl } = req.body;
+  await Client.create({
+    name,
+    email,
+    company,
+    logoUrl: String(logoUrl || '').trim(),
+    accentColor: String(accentColor || '').trim(),
+    schedulingUrl: String(schedulingUrl || '').trim()
+  });
   return res.redirect('/admin/clients');
 });
 
@@ -1498,13 +1641,19 @@ app.get('/admin/projects', adminAuth, async (req, res) => {
   const clientOptions = clients
     .map((c) => `<option value="${c._id}">${c.name} (${c.email})</option>`)
     .join('');
+  const projectOptions = projects
+    .map((p) => `<option value="${p._id}">${p.title}</option>`)
+    .join('');
   const rows = projects
     .map((p) => {
       const milestoneText = (p.milestones || [])
         .map((m) => `${m.title}${m.status ? ` (${m.status})` : ''}${m.approved ? ' ✓' : ''}`)
         .join('; ');
       const feedbackCount = (p.feedback || []).length;
-      return `<tr><td>${p.title}</td><td>${p.clientId?.name || ''}</td><td>${p.status}</td><td>${p.summary || ''}</td><td>${milestoneText || ''}</td><td>${feedbackCount}</td></tr>`;
+      const updateCount = (p.updates || []).length;
+      const fileCount = (p.files || []).length;
+      const contractCount = (p.contracts || []).length;
+      return `<tr><td>${p.title}</td><td>${p.clientId?.name || ''}</td><td>${p.status}</td><td>${p.summary || ''}</td><td>${milestoneText || ''}</td><td>${feedbackCount}</td><td>${updateCount}</td><td>${fileCount}</td><td>${contractCount}</td></tr>`;
     })
     .join('');
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -1558,9 +1707,28 @@ app.get('/admin/projects', adminAuth, async (req, res) => {
       <textarea name="links" placeholder="Links: Label|https://...; ..."></textarea>
       <button class="btn" type="submit">Add Project</button>
     </form>
+    <form class="form" method="post" action="/admin/projects/updates">
+      <select name="projectId" required>${projectOptions}</select>
+      <input name="title" placeholder="Update title" required />
+      <textarea name="body" placeholder="Update details" required></textarea>
+      <button class="btn" type="submit">Post Update</button>
+    </form>
+    <form class="form" method="post" action="/admin/projects/files">
+      <select name="projectId" required>${projectOptions}</select>
+      <input name="label" placeholder="File name" required />
+      <input name="url" placeholder="File URL (Drive/Dropbox/etc.)" required />
+      <input name="note" placeholder="Short note (optional)" />
+      <button class="btn" type="submit">Share File Link</button>
+    </form>
+    <form class="form" method="post" action="/admin/projects/contracts">
+      <select name="projectId" required>${projectOptions}</select>
+      <input name="title" placeholder="Agreement title" required />
+      <input name="url" placeholder="Agreement URL (e-sign link)" required />
+      <button class="btn" type="submit">Share Agreement</button>
+    </form>
     <table>
-      <thead><tr><th>Title</th><th>Client</th><th>Status</th><th>Summary</th><th>Milestones</th><th>Feedback</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="6">No projects yet.</td></tr>'}</tbody>
+      <thead><tr><th>Title</th><th>Client</th><th>Status</th><th>Summary</th><th>Milestones</th><th>Feedback</th><th>Updates</th><th>Files</th><th>Agreements</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="9">No projects yet.</td></tr>'}</tbody>
     </table>
   </main>
   <script>
@@ -1606,6 +1774,82 @@ app.post('/admin/projects', adminAuth, async (req, res) => {
     return { label, url };
   });
   await Project.create({ title, clientId, status, summary, milestones: milestoneList, links: linkList });
+  return res.redirect('/admin/projects');
+});
+
+app.post('/admin/projects/updates', adminAuth, async (req, res) => {
+  const { projectId, title, body } = req.body;
+  if (!projectId || !title || !body) {
+    return res.redirect('/admin/projects');
+  }
+  const update = {
+    title: String(title).trim(),
+    body: String(body).trim(),
+    author: 'Admin'
+  };
+  const project = await Project.findById(projectId).populate('clientId').lean();
+  if (project) {
+    await Project.updateOne({ _id: projectId }, { $push: { updates: update } });
+    const clientEmail = project.clientId?.email;
+    if (clientEmail) {
+      await sendEmail({
+        to: clientEmail,
+        subject: `Project update: ${project.title}`,
+        text: `Update: ${update.title}\n\n${update.body}`
+      });
+    }
+  }
+  return res.redirect('/admin/projects');
+});
+
+app.post('/admin/projects/files', adminAuth, async (req, res) => {
+  const { projectId, label, url, note } = req.body;
+  if (!projectId || !label || !url) {
+    return res.redirect('/admin/projects');
+  }
+  const fileItem = {
+    label: String(label).trim(),
+    url: String(url).trim(),
+    note: String(note || '').trim(),
+    uploadedBy: 'Admin'
+  };
+  const project = await Project.findById(projectId).populate('clientId').lean();
+  if (project) {
+    await Project.updateOne({ _id: projectId }, { $push: { files: fileItem } });
+    const clientEmail = project.clientId?.email;
+    if (clientEmail) {
+      await sendEmail({
+        to: clientEmail,
+        subject: `File shared: ${project.title}`,
+        text: `File: ${fileItem.label}\n${fileItem.url}\n${fileItem.note || ''}`
+      });
+    }
+  }
+  return res.redirect('/admin/projects');
+});
+
+app.post('/admin/projects/contracts', adminAuth, async (req, res) => {
+  const { projectId, title, url } = req.body;
+  if (!projectId || !title || !url) {
+    return res.redirect('/admin/projects');
+  }
+  const contract = {
+    title: String(title).trim(),
+    url: String(url).trim(),
+    status: 'Pending'
+  };
+  const project = await Project.findById(projectId).populate('clientId').lean();
+  if (project) {
+    await Project.updateOne({ _id: projectId }, { $push: { contracts: contract } });
+    const clientEmail = project.clientId?.email;
+    if (clientEmail) {
+      await sendEmail({
+        to: clientEmail,
+        subject: `Agreement ready: ${project.title}`,
+        text: `Agreement: ${contract.title}\n${contract.url}`
+      });
+    }
+  }
   return res.redirect('/admin/projects');
 });
 
