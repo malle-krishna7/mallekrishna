@@ -67,10 +67,10 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" media="print" onload="this.media='all'" />
   <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" />
   </noscript>
 </head>
 <body>
@@ -311,20 +311,26 @@
           </div>
           <input type="tel" id="bk-phone" name="phone" placeholder="Phone number" required />
           <div class="row">
-            <select id="bk-service" name="service" required>
-              <option value="">Select service</option>
-              <option>UI/UX</option>
-              <option>MERN</option>
-              <option>Java Full Stack</option>
-              <option>Python</option>
-            </select>
-            <select id="bk-duration" name="durationMinutes" required>
-              <option value="">Duration</option>
-              <option value="30">30 min</option>
-              <option value="45">45 min</option>
-              <option value="60">60 min</option>
-              <option value="15">15 min quick call</option>
-            </select>
+            <div class="field">
+              <label class="sr-only" for="bk-service">Service</label>
+              <select id="bk-service" name="service" required>
+                <option value="">Select service</option>
+                <option>UI/UX</option>
+                <option>MERN</option>
+                <option>Java Full Stack</option>
+                <option>Python</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="sr-only" for="bk-duration">Call duration</label>
+              <select id="bk-duration" name="durationMinutes" required>
+                <option value="">Duration</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+                <option value="15">15 min quick call</option>
+              </select>
+            </div>
           </div>
           <div class="calendar">
             <div class="calendar-header">
@@ -519,6 +525,6 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>

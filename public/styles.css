@@ -9,7 +9,7 @@
   --border: rgba(202, 166, 90, 0.25);
   --shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
   --font-serif: "Playfair Display", "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --nav-bg: rgba(11, 20, 16, 0.92);
   --nav-menu-bg: rgba(18, 31, 24, 0.98);
   --input-bg: #0f1812;
@@ -20,8 +20,8 @@
   --bg-alt: #f1ece4;
   --panel: #ffffff;
   --text: #1b1b1b;
-  --muted: #6b645a;
-  --accent: #b88a3d;
+  --muted: #514a40;
+  --accent: #8b662f;
   --accent-2: #2f6b53;
   --border: rgba(184, 138, 61, 0.25);
   --shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
@@ -272,7 +272,7 @@ h2::after {
 
 .btn.ghost {
   background: transparent;
-  color: var(--accent);
+  color: var(--text);
   border: 1px solid var(--border);
   box-shadow: none;
 }
@@ -282,6 +282,10 @@ h2::after {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-top: 24px;
+}
+
+.hero-meta > div {
+  min-height: 72px;
 }
 
 .hero-note {
@@ -349,7 +353,7 @@ h2::after {
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -420,7 +424,7 @@ h2::after {
   height: 22px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  color: var(--accent);
+  color: var(--text);
   display: grid;
   place-items: center;
   font-size: 10px;
@@ -479,7 +483,7 @@ h2::after {
   height: 38px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  color: var(--accent);
+  color: var(--text);
   display: grid;
   place-items: center;
   font-family: var(--font-mono);
@@ -636,7 +640,7 @@ h2::after {
 }
 
 .calendar-legend {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .calendar-grid {
@@ -721,6 +725,18 @@ h2::after {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .faq-grid {

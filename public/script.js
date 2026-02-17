@@ -247,12 +247,36 @@ if (bookingForm) {
     renderSlots();
   };
 
-  durationSelect.addEventListener('change', renderSlots);
-  loadAvailability();
+  let bookingInitialized = false;
+  const initBookingAvailability = async () => {
+    if (bookingInitialized) return;
+    bookingInitialized = true;
+    await loadAvailability();
+  };
+
+  durationSelect.addEventListener('change', async () => {
+    if (!bookingInitialized) await initBookingAvailability();
+    renderSlots();
+  });
+
+  const bookingSection = document.getElementById('booking');
+  if (bookingSection && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        initBookingAvailability();
+        observer.disconnect();
+      });
+    }, { rootMargin: '120px 0px' });
+    observer.observe(bookingSection);
+  } else {
+    initBookingAvailability();
+  }
 
   bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     bookingStatus.textContent = 'Booking...';
+    if (!bookingInitialized) await initBookingAvailability();
 
     const startInput = document.getElementById('bk-start').value;
     const startDate = new Date(startInput);
