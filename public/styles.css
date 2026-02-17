@@ -850,6 +850,14 @@ h2::after {
 }
 
 @media (max-width: 640px) {
+  body {
+    background: var(--bg);
+  }
+
+  [data-theme="light"] body {
+    background: var(--bg);
+  }
+
   h1 {
     font-size: 2.35rem;
   }
