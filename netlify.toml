@@ -8,7 +8,43 @@ node_bundler = "esbuild"
 external_node_modules = ["mongoose", "dotenv", "express", "nodemailer"]
 
 [[redirects]]
-from = "/*"
+from = "/api/*"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/admin"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/admin/*"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/client"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/client/*"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/data"
+to = "/.netlify/functions/server"
+status = 200
+force = false
+
+[[redirects]]
+from = "/data/*"
 to = "/.netlify/functions/server"
 status = 200
 force = false

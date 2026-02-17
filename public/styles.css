@@ -317,6 +317,11 @@ h2::after {
   border-top: 1px solid rgba(202, 166, 90, 0.18);
 }
 
+.section:not(.trust-strip) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
 .section.alt {
   background: var(--bg-alt);
 }
@@ -410,10 +415,17 @@ h2::after {
   font-size: 12px;
 }
 
-.tech-badge img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
+.tech-mark {
+  min-width: 30px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0 6px;
 }
 
 .chips span {
