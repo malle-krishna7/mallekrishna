@@ -120,7 +120,22 @@ Netlify provides free HTTPS by default.
 2. Check Function logs for serverless errors
 3. Check Build logs for deploy issues
 
-## 11) Troubleshooting
+## 11) Bing Webmaster + IndexNow
+
+1. Keep verification file in repo:
+   - `public/BingSiteAuth.xml`
+2. After deploy, verify:
+   - `https://mallekrishna.in/BingSiteAuth.xml`
+3. In Bing Webmaster Tools:
+   - Add sitemap: `https://mallekrishna.in/sitemap.xml`
+4. IndexNow key file:
+   - Keep `public/<your-indexnow-key>.txt` in repo root of `public/`
+5. Submit URLs to IndexNow after deploy:
+   ```bash
+   npm run indexnow:submit
+   ```
+
+## 12) Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -130,7 +145,7 @@ Netlify provides free HTTPS by default.
 | 404 on pages | Ensure files are in `public/` and redirects are correct. |
 | Admin login fails | Verify `ADMIN_EMAIL` and `ADMIN_PASSWORD`. |
 
-## 12) Local Development
+## 13) Local Development
 
 ```bash
 npm install -g netlify-cli
